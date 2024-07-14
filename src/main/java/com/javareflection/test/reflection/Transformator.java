@@ -5,33 +5,33 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 public class Transformator {
-
     public <I, O> O transform(I input) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> source = input.getClass();
-        Class<?> target = Class.forName(source + "DTO");
+        Class<?> target = Class.forName(source.getName() + "DTO");
 
         O targetClass = (O) target.getDeclaredConstructor().newInstance();
 
-        Field[] fieldsSource = source.getDeclaredFields();
-        Field[] fieldsTarget = target.getDeclaredFields();
+        Field[] sourceFields = source.getDeclaredFields();
+        Field[] targetFields = target.getDeclaredFields();
 
-        Arrays.stream(fieldsSource).forEach(fieldSource ->
-                Arrays.stream(fieldsTarget).forEach(fieldTarget -> {
-                    validate(fieldSource, fieldTarget);
+        Arrays.stream(sourceFields).forEach(sourceField ->
+                Arrays.stream(targetFields).forEach(targetField -> {
+                    validate(sourceField, targetField);
                     try {
-                        fieldTarget.set(targetClass, fieldSource.get(input));
+                        targetField.set(targetClass, sourceField.get(input));
                     } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
+                        e.printStackTrace();
                     }
                 }));
+
         return targetClass;
     }
 
-    private void validate(Field fieldSource, Field fieldTarget) {
-        if(fieldSource.getName().equals(fieldTarget.getName())
-                && fieldSource.getType().equals(fieldTarget.getType())) {
-            fieldSource.setAccessible(true);
-            fieldTarget.setAccessible(true);
+    private void validate(Field sourceField, Field targetField) {
+        if (sourceField.getName().equals(targetField.getName())
+                && sourceField.getType().equals(targetField.getType())) {
+            sourceField.setAccessible(true);
+            targetField.setAccessible(true);
         }
     }
 }
