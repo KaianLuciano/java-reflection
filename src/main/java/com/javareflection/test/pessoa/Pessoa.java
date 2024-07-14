@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Pessoa {
-
-
+    private Integer id;
+    private String nome;
+    private String cpf;
 }
