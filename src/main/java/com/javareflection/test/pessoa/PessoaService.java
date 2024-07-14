@@ -1,9 +1,16 @@
 package com.javareflection.test.pessoa;
 
+import com.javareflection.test.reflection.Transformator;
+import lombok.RequiredArgsConstructor;
+
+import java.lang.reflect.InvocationTargetException;
+
+@RequiredArgsConstructor
 public class PessoaService {
-    public PessoaDTO list() {
+    private final Transformator transformator;
+
+    public PessoaDTO list() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Pessoa pessoa = new PessoaRepository().list();
-        PessoaDTO pessoaDTO = new PessoaDTO(pessoa.getNome(), pessoa.getCpf());
-        return pessoaDTO;
+        return transformator.transform(pessoa);
     }
 }
